@@ -13,11 +13,33 @@ namespace Ore
     /// </summary>
     public class Window
     {
+        #region Private Variables
         // the internal SFML window object
         private RenderWindow window;
 
-        // the internal Buffer object
+        // the internal Buffer objects
         private Buffer buffer;
+        #endregion
+
+        #region Getters/Setters
+        /// <summary>
+        /// Returns the SFML window used internally.
+        /// </summary>
+        public RenderWindow InternalWindow
+        {
+            get { return window; }
+        }
+        #endregion
+
+        #region Event Delegates
+        delegate void ClosingDelegate(object sender, EventArgs e);
+        delegate void ResizingDelegate(object sender, SizeEventArgs e);
+        #endregion
+
+        #region Public Variables
+        public event ClosingDelegate Closing;
+        public event ResizingDelegate Resizing;
+        #endregion
 
         /// <summary>
         /// Create a window.
@@ -26,42 +48,40 @@ namespace Ore
         /// <param name="width">The width of the window.</param>
         /// <param name="height">The height of the window.</param>
         /// <param name="mode">The mode of the window.</param>
-        public Window(string title, int width, int height, WindowMode mode = WindowMode.Normal)
+        public Window(string title, uint width, uint height, WindowMode mode = WindowMode.Normal)
         {
             window = new RenderWindow(
-                mode == WindowMode.Fullscreen ? VideoMode.FullscreenModes[0] : VideoMode.DesktopMode,
+                new VideoMode(width, height),
                 title,
                 mode == WindowMode.Fullscreen ? Styles.Fullscreen : Styles.Default
                 );
-            this.window.Size = new Vector2u((uint)width, (uint)height);
-            buffer = new Buffer();
+            this.window.Size = new Vector2u(width, height);
+            buffer = new Buffer(width, height);
+            // Events
+            window.Closed += window_Closed;
+            window.Resized += window_Resized;
         }
 
         /// <summary>
-        /// Create a window.
+        /// Check whether the window is open.
         /// </summary>
-        /// <param name="title">The title of the window.</param>
-        /// <param name="width">The width of the window.</param>
-        /// <param name="height">The height of the window.</param>
-        /// <param name="buffer">The buffer to use internally.</param>
-        /// <param name="mode">The mode of the window.</param>
-        public Window(string title, int width, int height, ref Buffer buffer, WindowMode mode = WindowMode.Normal)
+        /// <returns>Returns true if the window is open, else it is not.</returns>
+        public bool IsOpen()
         {
-            this.window = new RenderWindow(
-                mode == WindowMode.Fullscreen ? VideoMode.FullscreenModes[0] : VideoMode.DesktopMode,
-                title,
-                mode == WindowMode.Fullscreen ? Styles.Fullscreen : Styles.Default
-                );
-            this.window.Size = new Vector2u((uint)width, (uint)height);
-            this.buffer = buffer;
+            return window.IsOpen();
         }
 
-        /// <summary>
-        /// Open the window.
-        /// </summary>
-        public void Show()
+        #region Window Events
+        void window_Closed(object sender, EventArgs e)
         {
-            window.Display();
+            Closing(sender, e);
+            window.Close();
         }
+
+        void window_Resized(object sender, SizeEventArgs e)
+        {
+            Resizing(sender, e);
+        }
+        #endregion
     }
 }

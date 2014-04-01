@@ -12,7 +12,12 @@ namespace OreTest
         static void Main(string[] args)
         {
             Window window = new Window("Ore Test", 800, 600);
-            window.Show();
+            Engine engine = new Engine();
+            engine.Window = window;
+            while (window.IsOpen())
+            {
+                engine.Render();
+            }
         }
     }
 }
