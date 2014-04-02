@@ -20,6 +20,12 @@ namespace Ore
         private int width;
         private int height;
 
+        // SFML texture
+        private Texture texture;
+
+        // SFML sprite
+        private Sprite sprite;
+
         // true = front, false = back
         private bool currentBuffer = false;
 
@@ -33,6 +39,30 @@ namespace Ore
         public int Height { get { return height; } }
 
         /// <summary>
+        /// The Image object representing the contents of this buffer.
+        /// </summary>
+        public Image Image
+        {
+            get { return currentBuffer ? frontImage : backImage; }
+        }
+
+        /// <summary>
+        /// The Texture object representing the contents of this buffer.
+        /// </summary>
+        public Texture Texture
+        {
+            get { return texture; }
+        }
+
+        /// <summary>
+        /// Get the Sprite object representing the contents of this buffer.
+        /// </summary>
+        public Sprite Sprite
+        {
+            get { return sprite; }
+        }
+
+        /// <summary>
         /// Create a new buffer.
         /// </summary>
         /// <param name="width">The width of the buffer.</param>
@@ -43,15 +73,8 @@ namespace Ore
             backImage = new Image(width, height);
             this.width = (int)width;
             this.height = (int)height;
-        }
-
-        /// <summary>
-        /// Get the Image object representing the contents of this buffer.
-        /// </summary>
-        /// <returns>The Image object.</returns>
-        public Image GetImage()
-        {
-            return currentBuffer ? frontImage : backImage;
+            sprite = new Sprite();
+            texture = new Texture(frontImage);
         }
 
         /// <summary>
@@ -59,7 +82,10 @@ namespace Ore
         /// </summary>
         public void Swap()
         {
+            // set the texture to the current buffer and switch the current buffer, then update the sprite
+            texture.Update(currentBuffer ? frontImage : backImage);
             currentBuffer = !currentBuffer;
+            sprite.Texture = texture;
         }
 
         /// <summary>

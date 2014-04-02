@@ -16,9 +16,6 @@ namespace Ore
         #region Private Variables
         // the internal SFML window object
         private RenderWindow window;
-
-        // the internal Buffer objects
-        private Buffer buffer;
         #endregion
 
         #region Getters/Setters
@@ -29,11 +26,27 @@ namespace Ore
         {
             get { return window; }
         }
+
+        /// <summary>
+        /// Get the width of the window.
+        /// </summary>
+        public uint Width
+        {
+            get { return InternalWindow.Size.X; }
+        }
+
+        /// <summary>
+        /// Get the height of the window.
+        /// </summary>
+        public uint Height
+        {
+            get { return InternalWindow.Size.Y; }
+        }
         #endregion
 
         #region Event Delegates
-        delegate void ClosingDelegate(object sender, EventArgs e);
-        delegate void ResizingDelegate(object sender, SizeEventArgs e);
+        public delegate void ClosingDelegate(object sender, EventArgs e);
+        public delegate void ResizingDelegate(object sender, SizeEventArgs e);
         #endregion
 
         #region Public Variables
@@ -56,7 +69,6 @@ namespace Ore
                 mode == WindowMode.Fullscreen ? Styles.Fullscreen : Styles.Default
                 );
             this.window.Size = new Vector2u(width, height);
-            buffer = new Buffer(width, height);
             // Events
             window.Closed += window_Closed;
             window.Resized += window_Resized;

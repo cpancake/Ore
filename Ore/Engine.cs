@@ -12,6 +12,7 @@ namespace Ore
     public class Engine
     {
         private Window window;
+        private Buffer buffer;
 
         /// <summary>
         /// The current Window the engine is using.
@@ -27,7 +28,7 @@ namespace Ore
         /// </summary>
         public Engine()
         {
-
+            buffer = new Buffer(window.Width, window.Height);
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Ore
         {
             window.InternalWindow.DispatchEvents();
             window.InternalWindow.Clear();
-
+            window.InternalWindow.Draw(buffer.Sprite);
             window.InternalWindow.Display();
         }
     }
